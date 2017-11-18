@@ -8,12 +8,18 @@ public class User {
     // private Drive myDrive;
     
     public User(String username, String password, long space) {
-		super();
 		this.username = username;
 		this.password = password;
 		this.space = space;
 	}
     
+    
+   
+	public User() {
+	}
+
+
+
 	public String getUsername() {
 		return username;
 	}
