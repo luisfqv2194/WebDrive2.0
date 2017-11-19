@@ -10,9 +10,13 @@
 	
 </head>
 <body>
-	<h1 th:text="${username}"></h1>
+	<h1 th:text="'Welcome back, ' + ${session.userInSession.username}" th:unless="${session == null}"></h1>
         
-            <!-- <button onclick="location.href='home.htm'" >lala ${var1}</button>-->
+            <form method="POST" action="/home/upload" enctype="multipart/form-data">
+    			<input type="file" name="file" /><br/><br/>
+    			<input class="btn btn-primary"  type="submit" value="Subir" />
+    			<h4 style="color: #ff0033" th:text="${message}"></h4>
+			</form>
         
 </body>
 </html>

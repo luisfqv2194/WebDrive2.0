@@ -53,6 +53,7 @@ public class LogInController {
 		if(userService.logIn(user)) {
 			// Paso variables a HomeController
 			attributes.addFlashAttribute("username",user.getUsername());
+			attributes.addFlashAttribute("message","");
 			return "redirect:/home";
 		}
 		else if(user.getUsername().equals("") || user.getPassword().equals("")) {

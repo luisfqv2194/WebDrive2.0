@@ -1,5 +1,9 @@
 package webdrive.business;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+
 public class User {
 	
 	private String username;
