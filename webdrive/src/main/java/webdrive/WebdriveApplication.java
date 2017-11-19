@@ -4,12 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WebDriveApplication {
+public class WebdriveApplication {
 
 	public static void main(String[] args) {
-
-		SpringApplication.run(WebDriveApplication.class, args); 
-
+		SpringApplication.run(WebdriveApplication.class, args);
 	}
-
 }
