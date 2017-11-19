@@ -52,7 +52,6 @@ public class LogInController {
 		User user = new User(username,password);
 		if(userService.logIn(user)) {
 			attributes.addFlashAttribute("username",user.getUsername());
-			attributes.addAttribute("usuario",user.getUsername());
 			return "redirect:/home";
 		}
 		else if(user.getUsername().equals("") || user.getPassword().equals("")) {
@@ -86,11 +85,7 @@ public class LogInController {
 		return userService.getUsers();
 	}
 	
-	@GetMapping("/home") 
-	public String loadHomePage(@ModelAttribute("username") String username, Model model) {
-		model.addAttribute("username",username);
-		return "homepage";
-	}
+	
 	
 	
 }
