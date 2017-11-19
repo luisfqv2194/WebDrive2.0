@@ -21,7 +21,7 @@ public class HomeController {
 	@GetMapping("") 
 	public String loadHomePage(@ModelAttribute("username") String username, Model model) {
 		HomeController.username = (HomeController.username.equals("") ? username : HomeController.username);
-		model.addAttribute("username","Welcome back, "+ username);
+		model.addAttribute("username","Welcome back, " + username);
 		return "homepage";
 	}
 	

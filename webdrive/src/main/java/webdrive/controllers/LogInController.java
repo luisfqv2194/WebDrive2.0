@@ -51,6 +51,7 @@ public class LogInController {
 	public String logIn(@RequestParam("username") String username, @RequestParam("password") String password, Model model, RedirectAttributes attributes) {
 		User user = new User(username,password);
 		if(userService.logIn(user)) {
+			// Paso variables a HomeController
 			attributes.addFlashAttribute("username",user.getUsername());
 			return "redirect:/home";
 		}
