@@ -29,17 +29,17 @@ public class LogInController {
 	@Autowired
 	private UserService userService;
 	
-	@RequestMapping("/login/{username}") // Todos los métodos
-	@ResponseBody
-	public User getUser(@PathVariable String username) {
-		
-		return userService.getUser(username);
+	
+	@PostMapping("/singup")
+	public String addUser(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("space") String space) {
+		User user = new User(username,password,Long.valueOf(space));
+		userService.addUser(user);
+		return "redirect:";
 	}
 	
-	@PostMapping("/login")  // Solo Post
-	@ResponseBody
-	public void addUser(@RequestBody User user) {
-		userService.addUser(user);
+	@GetMapping("/singup")  
+	public String showRegisterForm() {
+		return "register";
 	}
 	
 	@GetMapping("") 
@@ -67,23 +67,6 @@ public class LogInController {
 	}
 	
 	
-	@PutMapping("/login/{username}") // Solo Put (Es para hacer updates)
-	@ResponseBody
-	public void updateUser(@RequestBody User user,@PathVariable String username) {
-		userService.updateUser(user,username);
-	}
-	
-	@DeleteMapping("/login/{username}") // Solo Delete (Es para hacer borrados)
-	@ResponseBody
-	public void deleteUser(@PathVariable String username) {
-		userService.deleteUser(username);
-	}
-	
-	@RequestMapping("/list") // Todos los métodos
-	@ResponseBody
-	public List<User> sayList() {
-		return userService.getUsers();
-	}
 	
 	
 	
