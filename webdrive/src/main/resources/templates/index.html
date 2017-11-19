@@ -5,6 +5,15 @@
 	<title>WebDrive</title>
 </head>
 <body>
-	<h1>My Cheese</h1>
+	<h1>Login</h1>
+        
+        <form method="post">
+            <input type="text" name="username" /> Username<br /><br />
+            <input type="password" name="password" /> Password<br /><br />
+            <input type="submit" value="Sign In" />
+        </form>
+        
+        <!--  <input type="button" method='get'  onclick="location.href='singup.htm'" value="Sign Up" > -->
+        <h3 style="color: #ff0033" th:text="${err}"></h3>
 </body>
 </html>

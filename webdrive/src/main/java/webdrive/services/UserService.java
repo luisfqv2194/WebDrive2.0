@@ -49,6 +49,16 @@ public class UserService {
 		users.removeIf(user -> user.getUsername().equals(username));
 		
 	}
+
+	public boolean logIn(User user) {
+		for(int i = 0; i < users.size(); i++) {
+			User u = users.get(i);
+			if(u.getUsername().equals(user.getUsername()) && u.getPassword().equals(user.getPassword())) {
+				return true ;
+			}
+		}
+		return false;
+	}
 	
 	
 
