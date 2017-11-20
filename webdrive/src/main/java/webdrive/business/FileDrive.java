@@ -8,6 +8,7 @@ public class FileDrive {
 	private String data;
 	private String secondUsername = null;
 	private Folder parent;
+	private String path;
 	
 	
 
@@ -30,14 +31,34 @@ public class FileDrive {
 		this.last_modified = last_modified;
 		this.data = data;
 		this.parent = parent;
+		path = (parent.getParent() == null ? parent.getPath() + "/" : parent.getPath());
 	}
+
+
+
+
+
 
 
 	public FileDrive() {
 		super();
 	}
 
-	
+	public String getPath() {
+		return path;
+	}
+
+
+
+
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+
+
+
 
 	public Folder getParent() {
 		return parent;

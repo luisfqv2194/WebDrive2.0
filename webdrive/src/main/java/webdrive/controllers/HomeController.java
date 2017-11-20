@@ -1,5 +1,7 @@
 package webdrive.controllers;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import webdrive.business.FileDrive;
 import webdrive.business.Folder;
 import webdrive.business.User;
 import webdrive.services.DriveService;
@@ -49,7 +52,6 @@ public class HomeController {
 		user.setUsername(username);
 		user.setMyDrive(driveService.getUserDrive(user.getUsername()));
 		user.getMyDrive().setRoot(folderService.getUserFolders(user.getUsername()));
-		System.out.println("En el controlador sale: " + user.getMyDrive().getRoot().getChilds().get(0).getPath());
 		user.getMyDrive().setCurrentFolder(user.getMyDrive().getRoot());
 		
 		return user;
@@ -69,11 +71,11 @@ public class HomeController {
 	@PostMapping("/create/folder") 
 	public String addNewFolder(HttpServletRequest request, @RequestParam("folderName") String folderName, @ModelAttribute("userInSession") User userInSession, Model model) {
 		Folder newFolder = new Folder(userInSession.getMyDrive().getCurrentFolder(),folderName);
-		System.out.println("Al agregar el nuevo folder tengo: " + newFolder.getPath());
+		
 		folderService.addFolder(newFolder, userInSession.getUsername());
 		userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
 		userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
-		System.out.println("En la lista de hijos en controller: " + userInSession.getMyDrive().getRoot().getChilds().get(2).getPath());
+		
 		userInSession.getMyDrive().setCurrentFolder(newFolder);
 		request.getSession().setAttribute("userInSession", userInSession);
 		return "redirect:/home";
@@ -84,7 +86,19 @@ public class HomeController {
 		return "createFile";
 	}
 	
+	@PostMapping("/create/file") 
+	public String addNewFile(HttpServletRequest request, @RequestParam("data") String Filedata,
+			@RequestParam("fileName") String fileName, @ModelAttribute("userInSession") User userInSession, Model model) {
+		
+		FileDrive newFile = new FileDrive(fileName, (long) Filedata.length(), new Date().getTime(), Filedata, userInSession.getMyDrive().getCurrentFolder());
+		Folder realCurrentFolder = userInSession.getMyDrive().getCurrentFolder();
+		fileService.addFile(newFile, userInSession.getUsername());
+		return "redirect:/home";
+	}
 	
+	
+	
+
 	@GetMapping("") 
 	public String loadHomePage(Model model) {
 		
@@ -93,13 +107,13 @@ public class HomeController {
 	
 	 @PostMapping("/upload") 
 	    public String singleFileUpload(@RequestParam("file") MultipartFile file,
-	                                   RedirectAttributes redirectAttributes) {
+	                                   RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession) {
 		 if (file.isEmpty()) {
 	            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 	            return "redirect:/home";
 	        }
 		 
-		 fileService.uploadFile(file);
+		 fileService.uploadFile(file, userInSession.getUsername(), userInSession.getMyDrive().getCurrentFolder());
 		 
 		 return "redirect:/home";
 	 }

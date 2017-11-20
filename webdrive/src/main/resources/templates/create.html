@@ -2,7 +2,8 @@
 <html>
 	<head th:replace="fragments :: head"></head>
 	<body>
-		<nav th:replace="fragments :: navbar"></nav>
+		<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div>  
 		<div class="row">
 		<div class="col-lg-6"><button type="button" class="btn btn-success" onclick="location.href='/home/create/folder'">Create Folder</button></div>
 		<div class="col-lg-6"><button type="button" class="btn btn-success" onclick="location.href='/home/create/file'">Create File</button></div>

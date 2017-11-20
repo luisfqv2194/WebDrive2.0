@@ -2,7 +2,19 @@
 <html>
 <head th:replace="fragments :: head"></head>
 	<body>
-		<nav th:replace="fragments :: navbar"></nav>
+		<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div>  
 	
+	<form action="/home/create/file" method="post">
+		<div class="form-group">
+    		<label for="name">File name</label>
+    		<input type="text" class="form-control" name="fileName"/>
+  		</div>
+		<div class="form-group">
+  			<label for="content">Contenido del archivo</label>
+  			<textarea class="form-control" rows="5" name="data"></textarea>
+		</div>
+		<button type="submit" class="btn btn-default">Crear</button>
+	</form>
 </body>
 </html>

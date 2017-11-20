@@ -3,11 +3,13 @@ package webdrive.business;
 public class Drive {
 	
 	private long space;
+	private long freeSpace;
 	private Folder root;
 	private Folder currentFolder;
 
 	public Drive(long space) {
 		this.space = space;
+		freeSpace = space;
 		root = new Folder(null,"root");
 		root.getChilds().add(new Folder(root,"Shared"));
 	}
@@ -20,6 +22,16 @@ public class Drive {
 
 	public Folder getCurrentFolder() {
 		return currentFolder;
+	}
+	
+	
+
+	public long getFreeSpace() {
+		return freeSpace;
+	}
+
+	public void setFreeSpace(long freeSpace) {
+		this.freeSpace = freeSpace;
 	}
 
 	public void setCurrentFolder(Folder currentFolder) {

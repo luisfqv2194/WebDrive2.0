@@ -35,6 +35,7 @@ public class DriveService {
 		Resource resource = loader.getResource(drivesJsonPath);
 		jsonDrive.put("username", username);
 		jsonDrive.put("size", userDrive.getSpace());
+		jsonDrive.put("freesize", userDrive.getFreeSpace());
 		arrayDrives.add(jsonDrive);
 		jsonObject = new JSONObject();
 		jsonObject.put("arrayDrives", arrayDrives);
@@ -80,6 +81,7 @@ public class DriveService {
 		    if(driveRecord.get("username").equals(username)) {
 		    	Drive drive = new Drive();
 		    	drive.setSpace(Long.valueOf(String.valueOf((driveRecord.get("size")))));
+		    	drive.setFreeSpace(Long.valueOf(String.valueOf((driveRecord.get("freesize")))));
 		        return drive;
 		    }
 		    

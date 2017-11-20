@@ -22,6 +22,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import webdrive.business.Folder;
+import webdrive.business.FileDrive;
+
 
 
 @Service 
@@ -67,11 +70,15 @@ public class FileService {
        
 	}
 	
-	public void uploadFile(MultipartFile multipartfile) {
+	public void uploadFile(MultipartFile multipartfile, String username, Folder parent) {
 		File convertedFile = convert(multipartfile);
 		InputStream isFile;
 		String dataTXT;
 		JSONObject jsonObject = this.readFiles();
+		JSONObject jsonParent = new JSONObject();
+		jsonParent.put("username", username);
+		jsonParent.put("name", (parent == null ? "nil" : parent.getName()));
+		jsonParent.put("path", (parent == null ? "nil" : parent.getPath()));
 		JSONArray arrayFiles = (JSONArray) jsonObject.get("arrayFiles");
 		try {
 			
@@ -84,6 +91,9 @@ public class FileService {
 			newFileRecord.put("last_modified", convertedFile.lastModified());
 			newFileRecord.put("secondUsername", "nil");
 			newFileRecord.put("data", dataTXT);
+			newFileRecord.put("username", username);
+			newFileRecord.put("parent", jsonParent);
+			newFileRecord.put("path", parent.getPath() + "/" +parent.getName() + "/");
 			arrayFiles.add(newFileRecord);
 			jsonObject = new JSONObject();
 			jsonObject.put("arrayFiles", arrayFiles);
@@ -99,6 +109,33 @@ public class FileService {
 		}
 		 
 	}
+	
+	public void addFile(FileDrive fileDrive, String username) {
+		
+		String dataTXT = fileDrive.getData();
+		JSONObject jsonObject = this.readFiles();
+		JSONObject jsonParent = new JSONObject();
+		jsonParent.put("username", username);
+		jsonParent.put("name", (fileDrive.getParent() == null ? "nil" : fileDrive.getParent().getName()));
+		jsonParent.put("path", (fileDrive.getParent() == null ? "nil" : fileDrive.getParent().getPath()));
+		JSONArray arrayFiles = (JSONArray) jsonObject.get("arrayFiles");
+		JSONObject newFileRecord = new JSONObject();
+		newFileRecord.put("name", fileDrive.getName());
+		newFileRecord.put("size", fileDrive.getSize());
+		newFileRecord.put("last_modified", fileDrive.getLast_modified());
+		newFileRecord.put("secondUsername", "nil");
+		newFileRecord.put("data", dataTXT);
+		newFileRecord.put("username", username);
+		newFileRecord.put("parent", jsonParent);
+		newFileRecord.put("path", fileDrive.getParent().getPath() + "/" + fileDrive.getParent().getName() + "/");
+		arrayFiles.add(newFileRecord);
+		jsonObject = new JSONObject();
+		jsonObject.put("arrayFiles", arrayFiles);
+		writeFile(jsonObject);
+		 
+	}
+	
+	
 	
 	public JSONObject readFiles() {
 		JSONParser parser = new JSONParser();
