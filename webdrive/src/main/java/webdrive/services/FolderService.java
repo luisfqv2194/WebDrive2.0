@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
@@ -35,7 +36,7 @@ public class FolderService {
 		JSONArray arrayFolders = (JSONArray) jsonObject.get("arrayFolders");
 		Resource resource = loader.getResource(foldersJsonPath);
 		jsonParent.put("username", username);
-		jsonParent.put("name", (userFolder.getParent() == null ? null : userFolder.getParent().getName()));
+		jsonParent.put("name", (userFolder.getParent() == null ? "nil" : userFolder.getParent().getName()));
 		
 		jsonMe.put("username", username);
 		jsonMe.put("name", userFolder.getName());
@@ -75,4 +76,75 @@ public class FolderService {
 		}
 		return jsonObject;
 	}
+
+	public Folder getUserFolders(String username) {
+		// TODO Auto-generated method stub
+		Folder root = new Folder(null,"root");
+		// Load root files TODO code
+		
+		// Load root folders
+		JSONObject jsonObject = readFolders();
+		JSONArray arrayFoldersJSON = (JSONArray) jsonObject.get("arrayFolders");
+		JSONArray arrayFolders = new JSONArray();
+		Iterator<JSONObject> folderIterator = arrayFoldersJSON.iterator();
+		while(folderIterator.hasNext()) {
+		    JSONObject folderRecord = folderIterator.next();
+		    JSONObject parentFolder = (JSONObject) folderRecord.get("parent");
+		    
+		    if(folderRecord.get("username").equals(username) &&  parentFolder.get("name").equals("root")) {
+		    	Folder folder = new Folder(root,String.valueOf(folderRecord.get("name")));
+		    	root.getChilds().add(folder);
+		        
+		    }
+		    else if (folderRecord.get("username").equals(username) &&  !parentFolder.get("name").equals("root") && !parentFolder.get("name").equals("nil")){
+		    	
+		    	arrayFolders.add(folderRecord);
+		    }
+		    
+		}
+		for(int i = 0;i<root.getChilds().size();i++) {
+			root.getChilds().set(i,getFolders(root.getChilds().get(i),username,arrayFolders));
+			
+		}
+		
+		return root;
+	}
+
+	private Folder getFolders(Folder pFolderRecord, String username, JSONArray pArrayFolders) {
+		if(pArrayFolders.size() == 0) {
+			return pFolderRecord;
+		}
+		
+		else {
+			JSONArray arrayFolders = new JSONArray();
+			Iterator<JSONObject> folderIterator = pArrayFolders.iterator();
+			while(folderIterator.hasNext()) {
+			    JSONObject folderRecord = folderIterator.next();
+			    JSONObject parentFolder = (JSONObject) folderRecord.get("parent");
+			    if(folderRecord.get("username").equals(username) &&  parentFolder.get("name").equals(pFolderRecord)) {
+			    	Folder folder = new Folder(pFolderRecord,String.valueOf(folderRecord.get("name")));
+			    	
+			    	pFolderRecord.getChilds().add(folder);
+			        
+			    }
+			    else if (folderRecord.get("username").equals(username)){
+			    	arrayFolders.add(folderRecord);
+			    }
+			    
+			}
+			
+			for(int i = 0;i<pFolderRecord.getChilds().size();i++) {
+				pFolderRecord.getChilds().set(i,getFolders(pFolderRecord.getChilds().get(i),username,arrayFolders));
+				
+			}
+			
+			return pFolderRecord;
+		}
+	}
+
+	
+
+	
+	
+	
 }

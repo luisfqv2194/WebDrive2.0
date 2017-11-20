@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
@@ -67,5 +68,22 @@ public class DriveService {
 			e.printStackTrace();
 		}
 		return jsonObject;
+	}
+
+	public Drive getUserDrive(String username) {
+		JSONObject jsonObject = readDrives();
+		JSONArray arrayDrives = (JSONArray) jsonObject.get("arrayDrives");
+		Iterator<JSONObject> driveIterator = arrayDrives.iterator();
+		while(driveIterator.hasNext()) {
+		    JSONObject driveRecord = driveIterator.next();
+		    
+		    if(driveRecord.get("username").equals(username)) {
+		    	Drive drive = new Drive();
+		    	drive.setSpace(Long.valueOf(String.valueOf((driveRecord.get("size")))));
+		        return drive;
+		    }
+		    
+		}
+		return null;
 	}
 }

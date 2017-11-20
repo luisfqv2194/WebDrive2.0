@@ -11,6 +11,10 @@ public class Drive {
 		root.setName("root");
 		root.getChilds().add(new Folder(root,"Shared"));
 	}
+	
+	public Drive() {
+		
+	}
 
 	public long getSpace() {
 		return space;

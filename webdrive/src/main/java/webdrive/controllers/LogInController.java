@@ -35,12 +35,16 @@ public class LogInController {
 		user.setMyDrive(new Drive(Long.valueOf(space)));
 		// Creo un usuario en el json correspondiente
 		userService.addUser(user);
+		
 		// Creo el drive del usuario en el json correspondiente
 		driveService.addDrive(user.getMyDrive(), user.getUsername());
-		//Creo carpeta "Raiz" del drive en el json correspondiente
+		
+		// Creo carpeta "Raiz" del drive en el json correspondiente
 		folderService.addFolder(user.getMyDrive().getRoot(), username);
-		//Creo carpeta "Shared" dentro de "Raiz" en el json correspondiente
+		
+		// Creo carpeta "Shared" dentro de "Raiz" en el json correspondiente
 		folderService.addFolder(user.getMyDrive().getRoot().getChilds().get(0), username);
+		
 		return "redirect:";
 	}
 	
@@ -60,7 +64,6 @@ public class LogInController {
 		if(userService.logIn(user)) {
 			// Paso variables a HomeController
 			attributes.addFlashAttribute("username",user.getUsername());
-			attributes.addFlashAttribute("message","");
 			return "redirect:/home";
 		}
 		else if(user.getUsername().equals("") || user.getPassword().equals("")) {

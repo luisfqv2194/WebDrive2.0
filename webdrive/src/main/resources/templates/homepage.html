@@ -10,7 +10,7 @@
 	
 </head>
 <body>
-	<h1 th:text="'Welcome back, ' + ${session.userInSession.username}" th:unless="${session == null}"></h1>
+	<h1 th:text="'Welcome back, ' + ${session.userInSession.getUsername()}" th:unless="${session == null}"></h1>
         
             <form method="POST" action="/home/upload" enctype="multipart/form-data">
     			<input type="file" name="file" /><br/><br/>

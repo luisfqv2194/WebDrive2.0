@@ -13,7 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import webdrive.business.User;
+import webdrive.services.DriveService;
 import webdrive.services.FileService;
+import webdrive.services.FolderService;
 import webdrive.services.UserService;
 
 @Controller
@@ -26,7 +28,11 @@ public class HomeController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private DriveService driveService;
 	
+	@Autowired
+	private FolderService folderService;
 	
 	@Autowired
 	private FileService fileService;
@@ -35,14 +41,17 @@ public class HomeController {
 	public User getUserInSession(@ModelAttribute("username") String username) {
 		User user = new User();
 		user.setUsername(username);
+		user.setMyDrive(driveService.getUserDrive(user.getUsername()));
+		user.getMyDrive().setRoot(folderService.getUserFolders(user.getUsername()));
+		
 		return user;
 		
 	}
 	
 	@GetMapping("") 
-	public String loadHomePage(@ModelAttribute("message") String message, Model model) {
+	public String loadHomePage(Model model) {
 		
-		model.addAttribute("message", message);
+		
 		return "homepage";
 	}
 	
