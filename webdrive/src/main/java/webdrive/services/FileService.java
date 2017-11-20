@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
@@ -93,7 +95,8 @@ public class FileService {
 			newFileRecord.put("data", dataTXT);
 			newFileRecord.put("username", username);
 			newFileRecord.put("parent", jsonParent);
-			newFileRecord.put("path", parent.getPath() + "/" +parent.getName() + "/");
+			String filePath = parent.getPath() + "/" +parent.getName() + "/";
+			newFileRecord.put("path", (parent.getParent() == null ? parent.getName() + "/" : filePath));
 			arrayFiles.add(newFileRecord);
 			jsonObject = new JSONObject();
 			jsonObject.put("arrayFiles", arrayFiles);
@@ -127,7 +130,8 @@ public class FileService {
 		newFileRecord.put("data", dataTXT);
 		newFileRecord.put("username", username);
 		newFileRecord.put("parent", jsonParent);
-		newFileRecord.put("path", fileDrive.getParent().getPath() + "/" + fileDrive.getParent().getName() + "/");
+		String filePath = fileDrive.getParent().getPath() + "/" + fileDrive.getParent().getName() + "/";
+		newFileRecord.put("path", (fileDrive.getParent().getParent() == null ? fileDrive.getParent().getName() + "/" : filePath));
 		arrayFiles.add(newFileRecord);
 		jsonObject = new JSONObject();
 		jsonObject.put("arrayFiles", arrayFiles);
@@ -154,5 +158,36 @@ public class FileService {
 			e.printStackTrace();
 		}
 		return jsonObject;
+	}
+
+	public ArrayList<FileDrive> getUserFiles(Folder parent, String username) {
+		ArrayList<FileDrive> files = new ArrayList();
+		JSONObject jsonObject = this.readFiles();
+		JSONArray arrayFiles = (JSONArray) jsonObject.get("arrayFiles");
+		Iterator<JSONObject> fileIterator = arrayFiles.iterator();
+		while(fileIterator.hasNext()) {
+			JSONObject fileRecord = fileIterator.next();
+			if (parent.getParent() == null && parent.getName().equals("root")) {
+				
+				if(fileRecord.get("username").equals(username) && fileRecord.get("path").equals(parent.getPath() + "/")) {
+					FileDrive newFile = new FileDrive(String.valueOf(fileRecord.get("name")),Long.valueOf(String.valueOf(fileRecord.get("size"))),
+							Long.valueOf(String.valueOf(fileRecord.get("last_modified"))), String.valueOf(fileRecord.get("data")), parent);
+					newFile.setPath(String.valueOf(fileRecord.get("path")));
+					files.add(newFile);
+				}
+			}
+			
+			else {
+				
+				if(fileRecord.get("username").equals(username) && fileRecord.get("path").equals(parent.getPath() + "/" + parent.getName() + "/")) {
+					FileDrive newFile = new FileDrive(String.valueOf(fileRecord.get("name")),Long.valueOf(String.valueOf(fileRecord.get("size"))),
+							Long.valueOf(String.valueOf(fileRecord.get("last_modified"))), String.valueOf(fileRecord.get("data")), parent);
+					newFile.setPath(String.valueOf(fileRecord.get("path")));
+					files.add(newFile);
+				}
+			}
+			
+		}
+		return files;
 	}
 }

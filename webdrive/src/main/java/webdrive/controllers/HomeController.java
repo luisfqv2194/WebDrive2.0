@@ -53,7 +53,6 @@ public class HomeController {
 		user.setMyDrive(driveService.getUserDrive(user.getUsername()));
 		user.getMyDrive().setRoot(folderService.getUserFolders(user.getUsername()));
 		user.getMyDrive().setCurrentFolder(user.getMyDrive().getRoot());
-		
 		return user;
 		
 	}
@@ -78,6 +77,7 @@ public class HomeController {
 		
 		userInSession.getMyDrive().setCurrentFolder(newFolder);
 		request.getSession().setAttribute("userInSession", userInSession);
+		
 		return "redirect:/home";
 	}
 	
@@ -87,13 +87,22 @@ public class HomeController {
 	}
 	
 	@PostMapping("/create/file") 
-	public String addNewFile(HttpServletRequest request, @RequestParam("data") String Filedata,
+	public String addNewFile(RedirectAttributes redirectAttributes, HttpServletRequest request, @RequestParam("data") String Filedata,
 			@RequestParam("fileName") String fileName, @ModelAttribute("userInSession") User userInSession, Model model) {
 		
 		FileDrive newFile = new FileDrive(fileName, (long) Filedata.length(), new Date().getTime(), Filedata, userInSession.getMyDrive().getCurrentFolder());
-		Folder realCurrentFolder = userInSession.getMyDrive().getCurrentFolder();
-		fileService.addFile(newFile, userInSession.getUsername());
-		return "redirect:/home";
+		if ((userInSession.getMyDrive().getFreeSpace()-newFile.getSize()) < 0) {
+			redirectAttributes.addFlashAttribute("err", "Not enough space!");
+			return "redirect:/home/create/file";
+		}
+		else {
+			Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+			fileService.addFile(newFile, userInSession.getUsername());
+			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			userInSession.getMyDrive().setCurrentFolder(currentFolder);
+			return "redirect:/home";
+		}
 	}
 	
 	

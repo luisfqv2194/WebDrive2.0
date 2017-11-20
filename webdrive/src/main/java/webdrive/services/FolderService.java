@@ -27,6 +27,9 @@ public class FolderService {
 	@Autowired
 	ResourceLoader loader;
 	
+	@Autowired
+	FileService fileService;
+	
 	private static final String foldersJsonPath = "classpath:static/folders.json";
 
 	public void addFolder(Folder userFolder, String username) {
@@ -85,7 +88,7 @@ public class FolderService {
 		
 		Folder root = new Folder(null,"root");
 		// Load root files TODO code
-		
+		root.setFiles(fileService.getUserFiles(root,username));
 		// Load root folders
 		JSONObject jsonObject = readFolders();
 		JSONArray arrayFoldersJSON = (JSONArray) jsonObject.get("arrayFolders");
@@ -123,11 +126,13 @@ public class FolderService {
 
 	private Folder getFolders(Folder pFolderRecord, String username, JSONArray pArrayFolders) {
 		
+		pFolderRecord.setFiles(fileService.getUserFiles(pFolderRecord,username));
+		
 		if(pArrayFolders.size() == 0) {
 			return pFolderRecord;
 		}
 		
-		else {
+		else {	
 			JSONArray arrayFolders = new JSONArray();
 			Iterator<JSONObject> folderIterator = pArrayFolders.iterator();
 			while(folderIterator.hasNext()) {
