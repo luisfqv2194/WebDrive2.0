@@ -4,16 +4,26 @@ public class Drive {
 	
 	private long space;
 	private Folder root;
+	private Folder currentFolder;
 
 	public Drive(long space) {
 		this.space = space;
-		root = new Folder();
-		root.setName("root");
+		root = new Folder(null,"root");
 		root.getChilds().add(new Folder(root,"Shared"));
 	}
 	
 	public Drive() {
 		
+	}
+	
+	
+
+	public Folder getCurrentFolder() {
+		return currentFolder;
+	}
+
+	public void setCurrentFolder(Folder currentFolder) {
+		this.currentFolder = currentFolder;
 	}
 
 	public long getSpace() {

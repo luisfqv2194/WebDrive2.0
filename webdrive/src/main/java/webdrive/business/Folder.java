@@ -6,20 +6,49 @@ public class Folder {
 	
 	private Folder parent = null;
 	private String name;
-	private String secondUsername;
+	private String secondUsername = null;
 	private ArrayList<Folder> childs = new ArrayList();
-	private ArrayList<File> files = new ArrayList();
+	private ArrayList<FileDrive> files = new ArrayList();
+	private String path;
+	
 	
 	public Folder(Folder parent, String name) {
 		this.parent = parent;
 		this.name = name;
+		createPath();
 	}
 
 	public Folder() {
 		
 	}
 
-	
+	public void createPath() {
+		if (parent == null) {
+			path = name;
+		}
+		else {
+			path = "";
+			createPathAux(path,parent);
+		}
+	}
+
+	private void createPathAux(String pPath, Folder pParent) {
+		if(pParent == null) {
+			path = pPath;
+		}
+		else {
+			createPathAux(pParent.name + '/' + pPath, pParent.parent);
+		}
+		
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
 
 	public Folder getParent() {
 		return parent;
@@ -45,11 +74,11 @@ public class Folder {
 		this.childs = childs;
 	}
 
-	public ArrayList<File> getFiles() {
+	public ArrayList<FileDrive> getFiles() {
 		return files;
 	}
 
-	public void setFiles(ArrayList<File> files) {
+	public void setFiles(ArrayList<FileDrive> files) {
 		this.files = files;
 	}
 

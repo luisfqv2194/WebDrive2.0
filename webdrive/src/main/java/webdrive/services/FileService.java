@@ -82,6 +82,7 @@ public class FileService {
 			newFileRecord.put("name", convertedFile.getName());
 			newFileRecord.put("size", convertedFile.length());
 			newFileRecord.put("last_modified", convertedFile.lastModified());
+			newFileRecord.put("secondUsername", "nil");
 			newFileRecord.put("data", dataTXT);
 			arrayFiles.add(newFileRecord);
 			jsonObject = new JSONObject();

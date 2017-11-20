@@ -1,25 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org/">
-<head>
-	<meta charset="UTF-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-	<title>WebDrive</title>
-	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
-    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="/webjars/font-awesome/css/font-awesome.min.css"></link>
-	
-</head>
+<head th:replace="fragments :: head"></head>
 <body>
-	<nav class="navbar navbar-inverse">
-  		<div class="container-fluid">
-    		<div class="navbar-header">
-      			<a class="navbar-brand" th:text="'Welcome back, ' + ${session.userInSession.getUsername()}" th:unless="${session == null}">WebSiteName</a>
-    		</div>
-    		<ul class="nav navbar-nav navbar-right">
-      			<li class="active right"><a href="/logout"><span class="glyphicon glyphicon-log-in"></span>   Logout</a></li>
-    		</ul>
-  		</div>
-	</nav>        
+	<nav th:replace="fragments :: navbar"></nav>        
+	
+	<div class="row">
+		<div class="col-lg-2"><button type="button" class="btn btn-success">Copiar</button></div>
+		<div class="col-lg-2"><button type="button" class="btn btn-success">Mover</button></div>
+		<div class="col-lg-2"><button type="button" class="btn btn-success">Navegar</button></div>
+		<div class="col-lg-2"><button type="button" class="btn btn-success" onclick="location.href='/home/create'">Crear</button></div>
+		<div class="col-lg-2"><button type="button" class="btn btn-success">Listar</button></div>
+	</div>
+	
             <form  method="POST" action="/home/upload" enctype="multipart/form-data">
     			<input type="file" name="file" /><br/><br/>
     			<input class="btn btn-primary"  type="submit" value="Subir" />
