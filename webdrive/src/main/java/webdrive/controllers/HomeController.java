@@ -98,6 +98,10 @@ public class HomeController {
 		else {
 			Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
 			fileService.addFile(newFile, userInSession.getUsername());
+			userInSession.getMyDrive().setFreeSpace(userInSession.getMyDrive().getFreeSpace() - newFile.getSize());
+			
+			// Update al json
+			driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
 			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
 			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
 			userInSession.getMyDrive().setCurrentFolder(currentFolder);

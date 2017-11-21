@@ -88,4 +88,44 @@ public class DriveService {
 		}
 		return null;
 	}
+	
+	public void writeDrives(JSONObject jsonObject) {
+		Resource resource = loader.getResource(drivesJsonPath);
+		try {
+			File file = resource.getFile();
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(jsonObject.toJSONString());
+            bw.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateDrive(Drive pDrive, String username) {
+		JSONObject jsonObject = readDrives();
+		JSONArray arrayDrives = (JSONArray) jsonObject.get("arrayDrives");
+		JSONArray newArrayDrives = new JSONArray();
+		JSONObject driveRecord2 = new JSONObject();
+		Iterator<JSONObject> driveIterator = arrayDrives.iterator();
+		while(driveIterator.hasNext()) { 
+			JSONObject driveRecord = driveIterator.next();
+			if(driveRecord.get("username").equals(username)) {
+		    
+				driveRecord2.put("username", username);
+				driveRecord2.put("size", pDrive.getSpace());
+				driveRecord2.put("freesize", pDrive.getFreeSpace());
+				
+		    	newArrayDrives.add(driveRecord2);
+		    }
+			else {
+				newArrayDrives.add(driveRecord);
+			}
+		}
+		jsonObject = new JSONObject();
+		jsonObject.put("arrayDrives", newArrayDrives);
+		writeDrives(jsonObject);
+		
+	}
 }
