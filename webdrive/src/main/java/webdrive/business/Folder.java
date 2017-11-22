@@ -1,6 +1,7 @@
 package webdrive.business;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Folder {
 	
@@ -89,6 +90,8 @@ public class Folder {
 	public void setSecondUsername(String secondUsername) {
 		this.secondUsername = secondUsername;
 	}
+	
+	
 	
 	
 	

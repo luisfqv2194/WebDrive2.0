@@ -98,8 +98,7 @@ public class FolderService {
 		    JSONObject folderRecord = folderIterator.next();
 		    JSONObject parentFolder = (JSONObject) folderRecord.get("parent");
 		    
-		    if(folderRecord.get("username").equals(username) && !folderRecord.get("name").equals(root.getName())  
-		    		&& folderRecord.get("path").equals(root.getPath() + "/")) {
+		    if(folderRecord.get("username").equals(username) && folderRecord.get("path").equals(root.getPath() + "/")) {
 		    	
 		    	Folder folder = new Folder(root,String.valueOf(folderRecord.get("name")));
 		    	folder.setPath(String.valueOf(folderRecord.get("path")));
@@ -120,12 +119,14 @@ public class FolderService {
 			
 		}
 		
+		
 	
 		return root;
 	}
 
 	private Folder getFolders(Folder pFolderRecord, String username, JSONArray pArrayFolders) {
-		
+		System.out.println("EL nombre deberia ser TEST.....");
+		System.out.println(pFolderRecord.getName());
 		pFolderRecord.setFiles(fileService.getUserFiles(pFolderRecord,username));
 		
 		if(pArrayFolders.size() == 0) {
@@ -138,8 +139,9 @@ public class FolderService {
 			while(folderIterator.hasNext()) {
 			    JSONObject folderRecord = folderIterator.next();
 			    JSONObject parentFolder = (JSONObject) folderRecord.get("parent");
-			    
-			    if(folderRecord.get("username").equals(username) && folderRecord.get("path").equals(pFolderRecord.getPath() + "/")) {
+			    System.out.println("El hijo puede ser" + folderRecord.toJSONString());
+			    System.out.println("El path del folder es:" + pFolderRecord.getPath());
+			    if(folderRecord.get("username").equals(username) && folderRecord.get("path").equals(pFolderRecord.getPath() + pFolderRecord.getName() + "/")) {
 			    	Folder folder = new Folder(pFolderRecord,String.valueOf(folderRecord.get("name")));
 			    	folder.setPath(String.valueOf(folderRecord.get("path")));
 			    	

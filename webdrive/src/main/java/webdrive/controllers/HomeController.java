@@ -61,6 +61,26 @@ public class HomeController {
 	public String loadCreatePage(Model model) {
 		return "create";
 	}
+	@GetMapping("/surf") 
+	public String loadSurfDrivePage(Model model) {
+		return "navigation";
+	}
+	@PostMapping("/surf") 
+	public String surfToFolder(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession, Model model, @RequestParam("folderPath") String folderPath) {
+		System.out.println("El nuevo path es: " + folderPath);
+		Folder newCurrentFolder = userInSession.getMyDrive().moveToChild(folderPath);
+		if (newCurrentFolder == null) {
+			redirectAttributes.addFlashAttribute("err","La carpeta no existe!");
+			return "redirect:/home/surf";
+		}
+		else {
+			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			userInSession.getMyDrive().setCurrentFolder(newCurrentFolder);
+			return "redirect:/home";
+		}
+		
+	}
 	
 	@GetMapping("/create/folder") 
 	public String loadCrreateFolderPage(Model model) {

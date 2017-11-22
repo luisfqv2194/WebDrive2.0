@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments :: head"></head>
+<body>
+	<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div> 
+	<form action="/home/surf" method="post">
+    	<div class="form-group">
+      		<label for="email">Folder name:</label>
+      		<input type="text" class="form-control" th:value="${session.userInSession.getMyDrive().getCurrentFolder().getPath()} 
+      		+ ${session.userInSession.getMyDrive().getCurrentFolder().getName()}" name="folderPath"/>
+    	</div>
+    	<button type="submit" class="btn btn-default">Ir a carpeta</button>
+  	</form>
+  	<h3 style="color: #ff0033" th:text="${err}"></h3>
+</body>
+</html>
