@@ -95,7 +95,7 @@ public class FileService {
 			newFileRecord.put("data", dataTXT);
 			newFileRecord.put("username", username);
 			newFileRecord.put("parent", jsonParent);
-			String filePath = parent.getPath() + "/" +parent.getName() + "/";
+			String filePath = parent.getPath() + parent.getName() + "/";
 			newFileRecord.put("path", (parent.getParent() == null ? parent.getName() + "/" : filePath));
 			arrayFiles.add(newFileRecord);
 			jsonObject = new JSONObject();
@@ -130,7 +130,7 @@ public class FileService {
 		newFileRecord.put("data", dataTXT);
 		newFileRecord.put("username", username);
 		newFileRecord.put("parent", jsonParent);
-		String filePath = fileDrive.getParent().getPath() + "/" + fileDrive.getParent().getName() + "/";
+		String filePath = fileDrive.getParent().getPath() + fileDrive.getParent().getName() + "/";
 		newFileRecord.put("path", (fileDrive.getParent().getParent() == null ? fileDrive.getParent().getName() + "/" : filePath));
 		arrayFiles.add(newFileRecord);
 		jsonObject = new JSONObject();
@@ -179,7 +179,7 @@ public class FileService {
 			
 			else {
 				
-				if(fileRecord.get("username").equals(username) && fileRecord.get("path").equals(parent.getPath() + "/" + parent.getName() + "/")) {
+				if(fileRecord.get("username").equals(username) && fileRecord.get("path").equals(parent.getPath() + parent.getName() + "/")) {
 					FileDrive newFile = new FileDrive(String.valueOf(fileRecord.get("name")),Long.valueOf(String.valueOf(fileRecord.get("size"))),
 							Long.valueOf(String.valueOf(fileRecord.get("last_modified"))), String.valueOf(fileRecord.get("data")), parent);
 					newFile.setPath(String.valueOf(fileRecord.get("path")));
@@ -189,5 +189,43 @@ public class FileService {
 			
 		}
 		return files;
+	}
+
+	public void updateFile(FileDrive updatedFile, String username) {
+		System.out.println("La data es: " + updatedFile.getData());
+		JSONObject jsonObject = this.readFiles();
+		JSONArray arrayFiles = (JSONArray) jsonObject.get("arrayFiles");
+		JSONArray arrayFilesResult = new JSONArray();
+		Iterator<JSONObject> fileIterator = arrayFiles.iterator();
+		while(fileIterator.hasNext()) {
+			JSONObject fileRecord = fileIterator.next();
+			System.out.println("El path del updatedFile es:" + updatedFile.getPath());
+			if(fileRecord.get("username").equals(username) && fileRecord.get("name").equals(updatedFile.getName()) 
+					&& fileRecord.get("path").equals(updatedFile.getPath())) {
+				JSONObject newFileRecord = new JSONObject();
+				JSONObject jsonParent = new JSONObject();
+				jsonParent.put("username", username);
+				jsonParent.put("name", updatedFile.getParent().getName());
+				jsonParent.put("path", updatedFile.getParent().getPath());
+				newFileRecord.put("name", updatedFile.getName());
+				newFileRecord.put("size", updatedFile.getSize());
+				newFileRecord.put("last_modified", updatedFile.getLast_modified());
+				newFileRecord.put("secondUsername", updatedFile.getSecondUsername());
+				newFileRecord.put("data", updatedFile.getData());
+				newFileRecord.put("username", username);
+				newFileRecord.put("parent", jsonParent);
+				newFileRecord.put("path", updatedFile.getPath());
+				arrayFilesResult.add(newFileRecord);
+				
+			}
+			else {
+				arrayFilesResult.add(fileRecord);
+			}
+			
+		}
+		jsonObject = new JSONObject();
+		jsonObject.put("arrayFiles", arrayFilesResult);
+		writeFile(jsonObject);
+		
 	}
 }

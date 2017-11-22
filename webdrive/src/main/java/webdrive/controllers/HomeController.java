@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,8 +58,50 @@ public class HomeController {
 		
 	}
 	
+	@PostMapping("/file")
+	public String loadFileContent(Model model, @ModelAttribute("userInSession") User userInSession, @RequestParam("fileName") String fileName) {
+		FileDrive file = userInSession.getMyDrive().getCurrentFolder().getFile(fileName);
+		
+		model.addAttribute("fileName",file.getName());
+		String[] parts = file.getName().split("\\.");
+		model.addAttribute("extension",parts[1]);
+		model.addAttribute("size",file.getSize());
+		model.addAttribute("data",file.getData());
+		model.addAttribute("last_modified",file.getLast_modified());
+		model.addAttribute("secondUsername",file.getSecondUsername());
+		model.addAttribute("filePath",file.getPath());
+		return "file";
+	}
+	
+
+	@PostMapping("/file/update") 
+	public String updateFile(RedirectAttributes redirectAttributes, Model model, @ModelAttribute("userInSession") User userInSession, @RequestParam("fileName") String fileName,
+			@RequestParam("data") String Filedata, @RequestParam("last_modified") String last_modified, @RequestParam("size") String fileSize, 
+			@RequestParam("secondUsername") String secondUsername, @RequestParam("filePath") String filePath) {
+		FileDrive newFile = new FileDrive(fileName, (long) Filedata.length(), new Date().getTime(), Filedata, userInSession.getMyDrive().getCurrentFolder());
+		newFile.setSecondUsername((secondUsername.equals("") || secondUsername.equals("null")) ? null : secondUsername);
+		newFile.setPath(filePath);
+		Long realFreeSpace = userInSession.getMyDrive().getFreeSpace() + Long.valueOf(fileSize);
+		if((realFreeSpace-newFile.getSize()) < 0) {
+			
+			redirectAttributes.addFlashAttribute("message","File is to big!");
+			return "redirect:/home";
+		}
+		else {
+			fileService.updateFile(newFile,userInSession.getUsername());
+			Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+			userInSession.getMyDrive().setFreeSpace(realFreeSpace - newFile.getSize());
+			driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
+			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			userInSession.getMyDrive().setCurrentFolder(currentFolder);
+			redirectAttributes.addFlashAttribute("message","File updated!");
+			return "redirect:/home";
+		}
+		
+	}
 	@GetMapping("/list") 
-	public String loadListPage(Model model) {
+	public String loadListPage(Model model,  @ModelAttribute("userInSession") User userInSession) {
 		return "list";
 	}
 	@GetMapping("/create") 
@@ -71,7 +114,7 @@ public class HomeController {
 	}
 	@PostMapping("/surf") 
 	public String surfToFolder(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession, Model model, @RequestParam("folderPath") String folderPath) {
-		System.out.println("El nuevo path es: " + folderPath);
+		
 		Folder oldCurrentFolder = userInSession.getMyDrive().getCurrentFolder();
 		Folder newCurrentFolder = userInSession.getMyDrive().moveToChild(folderPath);
 		if (newCurrentFolder == null) {

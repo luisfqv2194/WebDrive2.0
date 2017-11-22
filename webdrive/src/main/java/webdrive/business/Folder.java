@@ -42,6 +42,18 @@ public class Folder {
 		}
 		
 	}
+	
+	public FileDrive getFile(String fileName) {
+		Iterator<FileDrive> fileIterator = files.iterator();
+		while(fileIterator.hasNext()) {
+			FileDrive file = fileIterator.next();
+			
+			if(file.getName().equals(fileName)) {
+				return file;
+			}
+		}
+		return null;
+	}
 
 	public String getPath() {
 		return path;

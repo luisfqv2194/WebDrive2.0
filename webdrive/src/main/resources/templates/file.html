@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments :: head"></head>
+<body>
+	<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div>
+	<br/>
+	<form action="/home/file/update" method="post">
+		<div class="form-group">
+    		<label>File name</label>
+    		<input  type="text" disabled="true" class="form-control" th:value="${fileName}"/>
+    		<input  type="hidden" class="form-control" name="fileName" th:value="${fileName}"/>
+  		</div>
+  		<div class="form-group">
+    		<label for="name">File extension</label>
+    		<input  type="text" disabled="true" class="form-control" th:value="${extension}"/>
+    		<input  type="hidden" class="form-control" name="extension" th:value="${extension}"/>
+  		</div>
+  		<div class="form-group">
+    		<label>Size in bytes</label>
+    		<input disabled="true" type="text" class="form-control"  th:value="${size}" />
+    		<input  type="hidden" class="form-control" name="size" th:value="${size}"/>
+  		</div>
+  		<div class="form-group">
+    		<label>Last modified date</label>
+    		<input disabled="true" type="text" class="form-control" th:value="${last_modified}" />
+    		<input  type="hidden" class="form-control" name="last_modified" th:value="${last_modified}"/>
+  		</div>
+		<div class="form-group">
+  			<label>File contents</label>
+  			<textarea class="form-control" rows="5" name="data" th:value="${data}"  th:text="${data}"></textarea>
+		</div>
+		<input  type="hidden" class="form-control" name="secondUsername" th:value="${secondUsername}"/>
+		<input  type="hidden" class="form-control" name="filePath" th:value="${filePath}"/>
+		<button type="submit" class="btn btn-default">Save</button>
+		<h3 style="color: #ff0033" th:text="${err}"></h3>
+	</form>
+	 
+</body>
+</html>
