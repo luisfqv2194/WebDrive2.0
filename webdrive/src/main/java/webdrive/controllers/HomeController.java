@@ -89,12 +89,12 @@ public class HomeController {
 		}
 		else {
 			fileService.updateFile(newFile,userInSession.getUsername());
-			Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+			String currentFolder = userInSession.getMyDrive().getCurrentFolder().getPath();
 			userInSession.getMyDrive().setFreeSpace(realFreeSpace - newFile.getSize());
 			driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
 			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
 			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
-			userInSession.getMyDrive().setCurrentFolder(currentFolder);
+			userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(currentFolder));
 			redirectAttributes.addFlashAttribute("message","File updated!");
 			return "redirect:/home";
 		}
@@ -164,10 +164,11 @@ public class HomeController {
 		FileDrive newFile = new FileDrive(fileName, (long) Filedata.length(), new Date().getTime(), Filedata, userInSession.getMyDrive().getCurrentFolder());
 		if ((userInSession.getMyDrive().getFreeSpace()-newFile.getSize()) < 0) {
 			redirectAttributes.addFlashAttribute("err", "Not enough space!");
+			System.out.println("No deberia entrar aqui!");
 			return "redirect:/home/create/file";
 		}
 		else {
-			Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+			String currentFolder = userInSession.getMyDrive().getCurrentFolder().getPath();
 			fileService.addFile(newFile, userInSession.getUsername());
 			userInSession.getMyDrive().setFreeSpace(userInSession.getMyDrive().getFreeSpace() - newFile.getSize());
 			
@@ -175,7 +176,7 @@ public class HomeController {
 			driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
 			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
 			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
-			userInSession.getMyDrive().setCurrentFolder(currentFolder);
+			userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(currentFolder));
 			return "redirect:/home";
 		}
 	}
