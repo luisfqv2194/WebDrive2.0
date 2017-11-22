@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+	<head th:replace="fragments :: head"></head>    
+<body>
+	<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div> 
+	
+	<div class="list-group">
+		<div class="list-group-item active">Folders</div>
+		<div class="list-group-item" th:each="folder : ${session.userInSession.getMyDrive().getCurrentFolder().getChilds()}" th:text="${folder.getName()}"></div>
+	</div>
+	<br/>
+	<br/>
+	<div class="list-group">
+		<div class="list-group-item active">Files</div>
+		<div class="list-group-item" th:each="file : ${session.userInSession.getMyDrive().getCurrentFolder().getFiles()}" th:text="${file.getName()}"></div>
+	</div>
+	
+</body>
+</html>

@@ -57,6 +57,10 @@ public class HomeController {
 		
 	}
 	
+	@GetMapping("/list") 
+	public String loadListPage(Model model) {
+		return "list";
+	}
 	@GetMapping("/create") 
 	public String loadCreatePage(Model model) {
 		return "create";
