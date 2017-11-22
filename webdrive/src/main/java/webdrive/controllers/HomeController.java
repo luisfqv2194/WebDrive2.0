@@ -68,9 +68,13 @@ public class HomeController {
 	@PostMapping("/surf") 
 	public String surfToFolder(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession, Model model, @RequestParam("folderPath") String folderPath) {
 		System.out.println("El nuevo path es: " + folderPath);
+		Folder oldCurrentFolder = userInSession.getMyDrive().getCurrentFolder();
 		Folder newCurrentFolder = userInSession.getMyDrive().moveToChild(folderPath);
 		if (newCurrentFolder == null) {
 			redirectAttributes.addFlashAttribute("err","La carpeta no existe!");
+			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			userInSession.getMyDrive().setCurrentFolder(oldCurrentFolder);
 			return "redirect:/home/surf";
 		}
 		else {
