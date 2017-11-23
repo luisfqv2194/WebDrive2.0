@@ -6,18 +6,14 @@
 	<div th:replace="fragments :: navbar2"></div>        
 	
 	<div class="row">
-		<div class="col-lg-2"><button type="button" class="btn btn-success">Copy</button></div>
+		<div class="col-lg-2"><button type="button" class="btn btn-success" onclick="location.href='/home/copy'">Copy</button></div>
 		<div class="col-lg-2"><button type="button" class="btn btn-success">Move</button></div>
 		<div class="col-lg-2"><button type="button" class="btn btn-success" onclick="location.href='/home/surf'">Surf</button></div>
 		<div class="col-lg-2"><button type="button" class="btn btn-success" onclick="location.href='/home/create'">Create</button></div>
 		<div class="col-lg-2"><button type="button" class="btn btn-success" onclick="location.href='/home/list'">List</button></div>
 	</div>
 	
-            <form  method="POST" action="/home/upload" enctype="multipart/form-data">
-    			<input type="file" name="file" /><br/><br/>
-    			<input class="btn btn-primary"  type="submit" value="Subir" />
-    			<h4 style="color: #ff0033" th:text="${message}"></h4>
-			</form>
+            
 			
 			
 			

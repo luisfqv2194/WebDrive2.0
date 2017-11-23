@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments :: head"></head>
+<body>
+	<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div>  
+	
+	<form  method="POST" action="/home/upload" enctype="multipart/form-data">
+    			<input type="file" name="file" /><br/><br/>
+    			<input class="btn btn-primary"  type="submit" value="Subir" />
+    			<h4 style="color: #ff0033" th:text="${message}"></h4>
+    </form>
+
+</body>
+</html>

@@ -108,6 +108,22 @@ public class HomeController {
 	public String loadCreatePage(Model model) {
 		return "create";
 	}
+	@GetMapping("/copy") 
+	public String loadCopyPage(Model model) {
+		return "copy";
+	}
+	@RequestMapping("/copy/{type}") 
+	public String loadCopyPage(Model model, @PathVariable("type") String copyType) {
+		if(copyType.equals("rv")) {
+			return "copyRV";
+		}
+		else if (copyType.equals("vv")){
+			return "redirect:/home";
+		}
+		else {
+			return "redirect:/home";
+		}
+	}
 	@GetMapping("/surf") 
 	public String loadSurfDrivePage(Model model) {
 		return "navigation";
@@ -196,11 +212,29 @@ public class HomeController {
 		 if (file.isEmpty()) {
 	            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 	            return "redirect:/home";
-	        }
+	            }
 		 
-		 fileService.uploadFile(file, userInSession.getUsername(), userInSession.getMyDrive().getCurrentFolder());
+		 long fileSize = fileService.uploadFile(file, userInSession.getUsername(), userInSession.getMyDrive().getCurrentFolder(), userInSession.getMyDrive().getFreeSpace());
+		 String currentFolder = userInSession.getMyDrive().getCurrentFolder().getPath();
+		 if(fileSize != 0) {
+			 userInSession.getMyDrive().setFreeSpace(userInSession.getMyDrive().getFreeSpace() - fileSize);
+				driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
+				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+				userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(currentFolder));
+				return "redirect:/home";
+		 }
+		 else {
+			 userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			 userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			 userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(currentFolder));
+			 redirectAttributes.addFlashAttribute("message","File is too big!");
+			 return "redirect:/home";
+		 }
+		
+			
+			
 		 
-		 return "redirect:/home";
 	 }
 	
 	

@@ -72,7 +72,7 @@ public class FileService {
        
 	}
 	
-	public void uploadFile(MultipartFile multipartfile, String username, Folder parent) {
+	public long uploadFile(MultipartFile multipartfile, String username, Folder parent, long driveFreeSpace) {
 		File convertedFile = convert(multipartfile);
 		InputStream isFile;
 		String dataTXT;
@@ -82,6 +82,11 @@ public class FileService {
 		jsonParent.put("name", (parent == null ? "nil" : parent.getName()));
 		jsonParent.put("path", (parent == null ? "nil" : parent.getPath()));
 		JSONArray arrayFiles = (JSONArray) jsonObject.get("arrayFiles");
+		
+		if(driveFreeSpace - convertedFile.length() < 0) {
+			return 0;
+		}
+		long res = convertedFile.length();
 		try {
 			
 			isFile = new FileInputStream(convertedFile);
@@ -102,6 +107,7 @@ public class FileService {
 			jsonObject.put("arrayFiles", arrayFiles);
 			writeFile(jsonObject);
 			
+			
 		
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -110,6 +116,7 @@ public class FileService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return res;
 		 
 	}
 	

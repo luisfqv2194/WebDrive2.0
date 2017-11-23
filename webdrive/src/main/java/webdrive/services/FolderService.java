@@ -87,7 +87,7 @@ public class FolderService {
 	public Folder getUserFolders(String username) {
 		
 		Folder root = new Folder(null,"root");
-		// Load root files TODO code
+		
 		root.setFiles(fileService.getUserFiles(root,username));
 		// Load root folders
 		JSONObject jsonObject = readFolders();
