@@ -19,7 +19,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import webdrive.business.Drive;
-import webdrive.business.FileDrive;
 import webdrive.business.Folder;
 
 @Service 
@@ -159,81 +158,6 @@ public class FolderService {
 			}
 			
 			return pFolderRecord;
-		}
-	}
-	
-
-
-	public void copyVV(Folder currentFolder, Folder targetFolder, String username) {
-		if(currentFolder.getParent().equals(targetFolder)) {
-			return;
-		}
-		else {
-			Folder updatedFolder = currentFolder;
-			updatedFolder.setParent(targetFolder);
-			updateFolderPath(updatedFolder,currentFolder,username);
-			Iterator<FileDrive> fileIterator = updatedFolder.getFiles().iterator();
-			while(fileIterator.hasNext()) {
-				FileDrive oldFile = fileIterator.next();
-				FileDrive updatedFile = oldFile;
-				updatedFile.setParent(updatedFolder);
-				fileService.updateFilePath(oldFile,updatedFile,username);
-			}
-			
-			Iterator<Folder> folderIterator = updatedFolder.getChilds().iterator();
-			while(folderIterator.hasNext()) {
-				Folder oldChildFolder= folderIterator.next();
-				copyVV(oldChildFolder,updatedFolder,username);
-			}
-		}
-		
-	}
-
-	private void updateFolderPath(Folder updatedFolder, Folder currentFolder, String username) {
-		JSONObject jsonObject = readFolders();
-		JSONArray arrayFoldersJSON = (JSONArray) jsonObject.get("arrayFolders");
-		JSONArray arrayFoldersRes = new JSONArray();
-		Iterator<JSONObject> folderIterator = arrayFoldersJSON.iterator();
-		while(folderIterator.hasNext()) {
-			JSONObject oldFolderRecord = folderIterator.next();
-			if(oldFolderRecord.get("username").equals(username) && oldFolderRecord.get("name").equals(currentFolder.getName())
-					&& oldFolderRecord.get("path").equals(currentFolder.getPath())) {
-				JSONObject newFolderRecord = new JSONObject();
-				JSONObject parent = new JSONObject();
-				parent.put("username", username);
-				parent.put("name", updatedFolder.getParent().getName());
-				parent.put("path", updatedFolder.getParent().getPath());
-				
-				newFolderRecord.put("username", username);
-				newFolderRecord.put("name", updatedFolder.getName());
-				newFolderRecord.put("secondUsername", (updatedFolder.getSecondUsername() == null ? "nil" : updatedFolder.getSecondUsername()));
-				newFolderRecord.put("parent", parent);
-				newFolderRecord.put("path", updatedFolder.getPath());
-				arrayFoldersRes.add(newFolderRecord);
-				
-			}
-			else {
-				arrayFoldersRes.add(oldFolderRecord);
-			}
-		}
-		jsonObject = new JSONObject();
-		jsonObject.put("arrayFolders", arrayFoldersRes);
-		writeJSONObject(jsonObject);
-		
-		
-	}
-	
-	public void writeJSONObject(JSONObject jsonObject) {
-		Resource resource = loader.getResource(foldersJsonPath);
-		try {
-			File file = resource.getFile();
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(jsonObject.toJSONString());
-            bw.close();
-		} catch (IOException e) {
-			
-			e.printStackTrace();
 		}
 	}
 

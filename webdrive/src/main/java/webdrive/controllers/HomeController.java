@@ -118,47 +118,11 @@ public class HomeController {
 			return "copyRV";
 		}
 		else if (copyType.equals("vv")){
-			return "copyVV";
+			return "redirect:/home";
 		}
 		else {
 			return "redirect:/home";
 		}
-	}
-	@GetMapping("/vvcopyfolder") 
-	public String loadCopyVVFolderPage(Model model) {
-		return "copyvvFile";
-	}
-	@PostMapping("/vvcopyfolder") 
-	public String copyVVFolder(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession, Model model, @RequestParam("targetFolderPath") String folderPath) {
-		Folder targetFolder = userInSession.getMyDrive().moveToChild(folderPath);
-		Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
-		if(targetFolder == null) {
-			redirectAttributes.addFlashAttribute("err","Folder doesn't exits!");
-			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
-			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
-			userInSession.getMyDrive().setCurrentFolder(currentFolder);
-			return "redirect:/home/vvcopyfolder";
-		}
-		else {
-			long folderSize = currentFolder.getTotalSize();
-			if((userInSession.getMyDrive().getFreeSpace()-folderSize) < 0) {
-				redirectAttributes.addFlashAttribute("err","Not enough space for copy operation!");
-				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
-				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
-				userInSession.getMyDrive().setCurrentFolder(currentFolder);
-				return "redirect:/home/vvcopyfolder";
-			}
-			else {
-				String targetPath = targetFolder.getPath();
-				folderService.copyVV(currentFolder,targetFolder,userInSession.getUsername());
-				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
-				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
-				userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(targetPath));
-				return "redirect:/home";
-			}
-			
-		}
-		
 	}
 	@GetMapping("/surf") 
 	public String loadSurfDrivePage(Model model) {
@@ -221,7 +185,6 @@ public class HomeController {
 		}
 		else {
 			String currentFolder = userInSession.getMyDrive().getCurrentFolder().getPath();
-			System.out.println("currentFolder TIENE el path: " + currentFolder);
 			fileService.addFile(newFile, userInSession.getUsername());
 			userInSession.getMyDrive().setFreeSpace(userInSession.getMyDrive().getFreeSpace() - newFile.getSize());
 			

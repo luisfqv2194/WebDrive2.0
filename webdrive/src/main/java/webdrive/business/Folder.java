@@ -54,22 +54,6 @@ public class Folder {
 		}
 		return null;
 	}
-	
-	public long getTotalSize() {
-		Iterator<FileDrive> fileIterator = files.iterator();
-		long resultado = 0;
-		while(fileIterator.hasNext()) {
-			FileDrive file = fileIterator.next();
-			resultado += file.getSize();
-		}
-		Iterator<Folder> folderIterator = childs.iterator();
-		while(folderIterator.hasNext()) {
-			Folder child = folderIterator.next();
-			resultado += child.getTotalSize();
-		}
-		
-		return resultado;
-	}
 
 	public String getPath() {
 		return path;
@@ -85,14 +69,6 @@ public class Folder {
 
 	public void setParent(Folder parent) {
 		this.parent = parent;
-		
-		if(parent.getPath().equals("root")) {
-			this.path = parent.path + "/";
-		}
-		else {
-			this.path = parent.path + parent.name + "/";
-		}
-		
 	}
 
 	public String getName() {
@@ -126,8 +102,6 @@ public class Folder {
 	public void setSecondUsername(String secondUsername) {
 		this.secondUsername = secondUsername;
 	}
-
-	
 	
 	
 	
