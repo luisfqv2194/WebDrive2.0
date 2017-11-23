@@ -125,6 +125,75 @@ public class HomeController {
 		}
 	}
 	
+	@GetMapping("/move") 
+	public String loadmovePage(Model model) {
+		return "move";
+	}
+	
+	@GetMapping("/movefile") 
+	public String loadmoveFilePage(Model model) {
+		return "moveFile";
+	}
+	
+	@PostMapping("/movefile") 
+	public String moveFile(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession,
+			Model model, @RequestParam("fileName") String fileName, @RequestParam("targetFolderPath") String folderPath) {
+		Folder targetFolder = userInSession.getMyDrive().moveToChild(folderPath);
+		Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+		FileDrive file = currentFolder.getFile(fileName);
+		if(file == null) {
+			redirectAttributes.addFlashAttribute("err","File doesn't exits!");
+			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			userInSession.getMyDrive().setCurrentFolder(currentFolder);
+			return "redirect:/home/movefile";
+		}
+		else {
+				String targetPath = targetFolder.getPath();
+				FileDrive updatedFile = new FileDrive();
+				updatedFile.setParent(targetFolder);
+				updatedFile.setName(file.getName());
+				updatedFile.setData(file.getData());
+				updatedFile.setSecondUsername(file.getSecondUsername());
+				updatedFile.setSize(file.getSize());
+				updatedFile.setLast_modified(file.getLast_modified());
+				fileService.moveFilePath(file, updatedFile, userInSession.getUsername());
+				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+				userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(targetPath));
+				return "redirect:/home";
+			}
+		
+	}
+	
+	@GetMapping("/movefolder") 
+	public String loadmoveFolderPage(Model model) {
+		return "moveFolder";
+	}
+	
+	@PostMapping("/movefolder") 
+	public String moveFolder(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession,
+			@RequestParam("targetFolderPath") String folderPath) {
+		Folder targetFolder = userInSession.getMyDrive().moveToChild(folderPath);
+		Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+		
+		if(targetFolder == null) {
+			redirectAttributes.addFlashAttribute("err","Folder doesn't exits!");
+			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			userInSession.getMyDrive().setCurrentFolder(currentFolder);
+			return "redirect:/home/movefolder";
+		}
+		else {
+				String targetPath = targetFolder.getPath();
+				folderService.copyVVOrMove(currentFolder,targetFolder,userInSession.getUsername(),2);
+				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+				userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(targetPath));
+				return "redirect:/home";
+			}
+	}
+	
 	@GetMapping("/vvcopyfile") 
 	public String loadCopyVVFilePage(Model model) {
 		return "copyvvFile";
