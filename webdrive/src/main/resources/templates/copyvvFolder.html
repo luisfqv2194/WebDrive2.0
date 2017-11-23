@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments :: head"></head>
+<body>
+	<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div> 
+	
+	<form action="/home/copyvvFolder" method="post">
+		<div class="form-group">
+    		<label for="name">Destination folder</label>
+    		<input type="text" class="form-control" name="targetFolderPath"/>
+  		</div>
+		<button type="submit" class="btn btn-default">Copiar</button>
+		<h3 style="color: #ff0033" th:text="${err}"></h3>
+	</form>
+</body>
+</html>

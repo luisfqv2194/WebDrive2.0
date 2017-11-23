@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments :: head"></head>
+<body>
+	<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div> 
+	
+	<div th:replace="fragments :: navbar2"></div>  
+		<div class="row">
+		<div class="col-lg-6"><button type="button" class="btn btn-success" onclick="location.href='/home/vvcopyfolder'">Copy Folder</button></div>
+		<div class="col-lg-6"><button type="button" class="btn btn-success" onclick="location.href='/home/vvcopyfile'">Copy File</button></div>
+	</div>
+
+</body>
+</html>

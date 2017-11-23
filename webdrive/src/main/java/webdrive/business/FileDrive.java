@@ -69,7 +69,15 @@ public class FileDrive {
 
 
 	public void setParent(Folder parent) {
+		
 		this.parent = parent;
+		
+		if(parent.getPath().equals("root")) {
+			this.path = parent.getPath() + "/";
+		}
+		else {
+			this.path = parent.getPath() + parent.getName() + "/";
+		}
 	}
 
 

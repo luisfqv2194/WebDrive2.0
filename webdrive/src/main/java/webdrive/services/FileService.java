@@ -206,7 +206,7 @@ public class FileService {
 		Iterator<JSONObject> fileIterator = arrayFiles.iterator();
 		while(fileIterator.hasNext()) {
 			JSONObject fileRecord = fileIterator.next();
-			System.out.println("El path del updatedFile es:" + updatedFile.getPath());
+			
 			if(fileRecord.get("username").equals(username) && fileRecord.get("name").equals(updatedFile.getName()) 
 					&& fileRecord.get("path").equals(updatedFile.getPath())) {
 				JSONObject newFileRecord = new JSONObject();
@@ -233,6 +233,45 @@ public class FileService {
 		jsonObject = new JSONObject();
 		jsonObject.put("arrayFiles", arrayFilesResult);
 		writeFile(jsonObject);
+		
+	}
+
+	public void updateFilePath(FileDrive oldFile, FileDrive updatedFile, String username) {
+		
+		JSONObject jsonObject = this.readFiles();
+		JSONArray arrayFiles = (JSONArray) jsonObject.get("arrayFiles");
+		JSONArray arrayFilesResult = new JSONArray();
+		Iterator<JSONObject> fileIterator = arrayFiles.iterator();
+		while(fileIterator.hasNext()) {
+			JSONObject fileRecord = fileIterator.next();
+			if(fileRecord.get("username").equals(username) && fileRecord.get("name").equals(oldFile.getName()) 
+					&& fileRecord.get("path").equals(oldFile.getPath())) {
+				JSONObject newFileRecord = new JSONObject();
+				JSONObject jsonParent = new JSONObject();
+				jsonParent.put("username", username);
+				jsonParent.put("name", updatedFile.getParent().getName());
+				jsonParent.put("path", updatedFile.getParent().getPath());
+				newFileRecord.put("name", updatedFile.getName());
+				newFileRecord.put("size", updatedFile.getSize());
+				newFileRecord.put("last_modified", updatedFile.getLast_modified());
+				newFileRecord.put("secondUsername", updatedFile.getSecondUsername());
+				newFileRecord.put("data", updatedFile.getData());
+				newFileRecord.put("username", username);
+				newFileRecord.put("parent", jsonParent);
+				newFileRecord.put("path", updatedFile.getPath());
+				arrayFilesResult.add(newFileRecord);
+				
+			}
+			else {
+				arrayFilesResult.add(fileRecord);
+			}
+		}
+		jsonObject = new JSONObject();
+		jsonObject.put("arrayFiles", arrayFilesResult);
+		writeFile(jsonObject);
+		
+		
+			
 		
 	}
 }
