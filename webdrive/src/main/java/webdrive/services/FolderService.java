@@ -164,26 +164,46 @@ public class FolderService {
 	
 
 
-	public void copyVV(Folder currentFolder, Folder targetFolder, String username) {
+	public void copyVVOrMove(Folder currentFolder, Folder targetFolder, String username, int type) {
 		if(currentFolder.getParent().equals(targetFolder)) {
 			return;
 		}
 		else {
-			Folder updatedFolder = currentFolder;
+			Folder updatedFolder = new Folder();
+			updatedFolder.setName(currentFolder.getName());
 			updatedFolder.setParent(targetFolder);
-			updateFolderPath(updatedFolder,currentFolder,username);
-			Iterator<FileDrive> fileIterator = updatedFolder.getFiles().iterator();
-			while(fileIterator.hasNext()) {
-				FileDrive oldFile = fileIterator.next();
-				FileDrive updatedFile = oldFile;
-				updatedFile.setParent(updatedFolder);
-				fileService.updateFilePath(oldFile,updatedFile,username);
+			if(type == 1) {
+				addFolder(updatedFolder,username);
+				
+			}
+			else {
+				updateFolderPath(updatedFolder,currentFolder,username);
 			}
 			
-			Iterator<Folder> folderIterator = updatedFolder.getChilds().iterator();
+			Iterator<FileDrive> fileIterator = currentFolder.getFiles().iterator();
+			while(fileIterator.hasNext()) {
+				FileDrive oldFile = fileIterator.next();
+				FileDrive updatedFile = new FileDrive();
+				updatedFile.setParent(updatedFolder);
+				updatedFile.setName(oldFile.getName());
+				updatedFile.setData(oldFile.getData());
+				updatedFile.setSecondUsername(oldFile.getSecondUsername());
+				updatedFile.setSize(oldFile.getSize());
+				updatedFile.setLast_modified(oldFile.getLast_modified());
+				if(type == 1) {
+					
+					fileService.addFile(updatedFile,username);
+				}
+				else {
+					fileService.moveFilePath(oldFile,updatedFile,username);
+				}
+				
+			}
+			
+			Iterator<Folder> folderIterator = currentFolder.getChilds().iterator();
 			while(folderIterator.hasNext()) {
 				Folder oldChildFolder= folderIterator.next();
-				copyVV(oldChildFolder,updatedFolder,username);
+				copyVVOrMove(oldChildFolder,updatedFolder,username,type);
 			}
 		}
 		

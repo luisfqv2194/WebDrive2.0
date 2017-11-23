@@ -236,7 +236,9 @@ public class FileService {
 		
 	}
 
-	public void updateFilePath(FileDrive oldFile, FileDrive updatedFile, String username) {
+	
+	
+public void moveFilePath(FileDrive oldFile, FileDrive updatedFile, String username) {
 		
 		JSONObject jsonObject = this.readFiles();
 		JSONArray arrayFiles = (JSONArray) jsonObject.get("arrayFiles");

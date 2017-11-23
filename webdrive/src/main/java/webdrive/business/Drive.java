@@ -60,7 +60,6 @@ public class Drive {
 	public Folder moveToChild(String path) {
 		
 		String[] pathParts = path.split("/");
-		
 		ArrayList<String> pathParts2 = new ArrayList();
 		for(int i = 0; i < pathParts.length; i++) {
 			pathParts2.add(pathParts[i]);
@@ -85,9 +84,7 @@ public class Drive {
 			pathParts.remove(0);
 			Folder currentFolder = folder.getChilds().get(0);
 			
-			for(int i = 0; i < folder.getChilds().size(); i++) {
-				
-			}
+			
 			folder.getChilds().remove(0);
 			
 			return searchForChildAux(pathParts,root.getChilds(),currentFolder);
@@ -95,8 +92,7 @@ public class Drive {
 	}
 
 	private Folder searchForChildAux(ArrayList<String> pathParts, ArrayList<Folder> siblings, Folder currentFolder) {
-		for(int i = 0; i < siblings.size(); i++) {
-			System.out.println("Mis herrmanos son: " + siblings.get(i).getName());			
+		for(int i = 0; i < siblings.size(); i++) {		
 		}
 		
 		if(currentFolder.getName().equals(pathParts.get(0)) && pathParts.size() == 1) {

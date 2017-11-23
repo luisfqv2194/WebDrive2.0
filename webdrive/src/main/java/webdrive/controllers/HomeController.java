@@ -94,7 +94,7 @@ public class HomeController {
 			driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
 			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
 			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
-			userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(currentFolder));
+			userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().getRoot());
 			redirectAttributes.addFlashAttribute("message","File updated!");
 			return "redirect:/home";
 		}
@@ -124,14 +124,57 @@ public class HomeController {
 			return "redirect:/home";
 		}
 	}
+	
+	@GetMapping("/vvcopyfile") 
+	public String loadCopyVVFilePage(Model model) {
+		return "copyvvFile";
+	}
+	@PostMapping("/vvcopyfile") 
+	public String loadCopyVVFile(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession,
+			Model model, @RequestParam("fileName") String fileName, @RequestParam("targetFolderPath") String folderPath) {
+		Folder targetFolder = userInSession.getMyDrive().moveToChild(folderPath);
+		Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+		FileDrive file = currentFolder.getFile(fileName);
+		if(file == null) {
+			redirectAttributes.addFlashAttribute("err","File doesn't exits!");
+			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			userInSession.getMyDrive().setCurrentFolder(currentFolder);
+			return "redirect:/home/vvcopyfile";
+		}
+		else {
+			long freeSpace = userInSession.getMyDrive().getFreeSpace() - file.getSize();
+			if(freeSpace < 0) {
+				redirectAttributes.addFlashAttribute("err","Not enough space for copy operation!");
+				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+				userInSession.getMyDrive().setCurrentFolder(currentFolder);
+				return "redirect:/home/vvcopyfile";
+			}
+			else {
+				String targetPath = targetFolder.getPath();
+				file.setParent(targetFolder);
+				fileService.addFile(file, userInSession.getUsername());
+				userInSession.getMyDrive().setFreeSpace(freeSpace);
+				driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
+				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+				userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(targetPath));
+				return "redirect:/home";
+			}
+			
+		}
+		
+	}
 	@GetMapping("/vvcopyfolder") 
 	public String loadCopyVVFolderPage(Model model) {
-		return "copyvvFile";
+		return "copyvvFolder";
 	}
 	@PostMapping("/vvcopyfolder") 
 	public String copyVVFolder(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession, Model model, @RequestParam("targetFolderPath") String folderPath) {
 		Folder targetFolder = userInSession.getMyDrive().moveToChild(folderPath);
 		Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+		
 		if(targetFolder == null) {
 			redirectAttributes.addFlashAttribute("err","Folder doesn't exits!");
 			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
@@ -150,12 +193,15 @@ public class HomeController {
 			}
 			else {
 				String targetPath = targetFolder.getPath();
-				folderService.copyVV(currentFolder,targetFolder,userInSession.getUsername());
+				userInSession.getMyDrive().setFreeSpace(userInSession.getMyDrive().getFreeSpace() - folderSize);
+				driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
+				folderService.copyVVOrMove(currentFolder,targetFolder,userInSession.getUsername(),1);
 				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
 				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
 				userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(targetPath));
 				return "redirect:/home";
 			}
+			
 			
 		}
 		
@@ -220,7 +266,7 @@ public class HomeController {
 			return "redirect:/home/create/file";
 		}
 		else {
-			String currentFolder = userInSession.getMyDrive().getCurrentFolder().getPath();
+			String currentFolder = userInSession.getMyDrive().getCurrentFolder().getPath() + userInSession.getMyDrive().getCurrentFolder().getName() + "/";
 			System.out.println("currentFolder TIENE el path: " + currentFolder);
 			fileService.addFile(newFile, userInSession.getUsername());
 			userInSession.getMyDrive().setFreeSpace(userInSession.getMyDrive().getFreeSpace() - newFile.getSize());
@@ -229,7 +275,7 @@ public class HomeController {
 			driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
 			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
 			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
-			userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().moveToChild(currentFolder));
+			userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().getRoot());
 			return "redirect:/home";
 		}
 	}
