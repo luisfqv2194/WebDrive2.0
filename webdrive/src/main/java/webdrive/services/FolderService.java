@@ -257,6 +257,48 @@ public class FolderService {
 		}
 	}
 
+	public void deleteFolder(Folder currentFolder, String username) {
+		
+			
+			Iterator<FileDrive> fileIterator = currentFolder.getFiles().iterator();
+			while(fileIterator.hasNext()) {
+				
+				FileDrive oldFile = fileIterator.next();
+				fileService.deleteFile(oldFile,username);
+				
+			}
+			
+			Iterator<Folder> folderIterator = currentFolder.getChilds().iterator();
+			while(folderIterator.hasNext()) {
+				Folder oldChildFolder= folderIterator.next();
+				deleteFolder(oldChildFolder, username);
+			}
+			
+			JSONObject jsonObject = readFolders();
+			JSONArray arrayFoldersJSON = (JSONArray) jsonObject.get("arrayFolders");
+			JSONArray arrayFoldersRes = new JSONArray();
+			Iterator<JSONObject> folderIterator2 = arrayFoldersJSON.iterator();
+			while(folderIterator2.hasNext()) {
+				JSONObject oldFolderRecord = folderIterator2.next();
+				if(oldFolderRecord.get("username").equals(username) && oldFolderRecord.get("name").equals(currentFolder.getName())
+						&& oldFolderRecord.get("path").equals(currentFolder.getPath())) {
+					
+					//No lo meto
+					
+				}
+				else {
+					arrayFoldersRes.add(oldFolderRecord);
+				}
+				
+			}
+			
+			jsonObject = new JSONObject();
+			jsonObject.put("arrayFolders", arrayFoldersRes);
+			writeJSONObject(jsonObject);
+		
+		
+	}
+
 	
 
 	

@@ -124,6 +124,56 @@ public class HomeController {
 			return "redirect:/home";
 		}
 	}
+	@GetMapping("/delete") 
+	public String loadDeletePage(Model model) {
+		return "delete";
+	}
+	
+	@GetMapping("/deletefolder") 
+	public String loadDeleteFolderPage(Model model) {
+		return "deletefolder";
+	}
+	
+	@PostMapping("/deletefolder") 
+	public String deleteFolder(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession) {
+		Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+		
+		folderService.deleteFolder(currentFolder,userInSession.getUsername());
+		userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+		userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+		userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().getRoot());
+		return "redirect:/home";
+			
+	}
+	
+	@GetMapping("/deletefile") 
+	public String loadDeleteFilePage(Model model) {
+		return "deletefile";
+	}
+	
+	@PostMapping("/deletefile") 
+	public String deleteFile(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession,
+			@RequestParam("fileName") String fileName) {
+		Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+		FileDrive file = currentFolder.getFile(fileName);
+		if(file == null) {
+			redirectAttributes.addFlashAttribute("err","File doesn't exits!");
+			userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+			userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+			userInSession.getMyDrive().setCurrentFolder(currentFolder);
+			return "redirect:/home/deletefile";
+		}
+		else {
+				long spaceToFree = file.getSize();
+				userInSession.getMyDrive().setFreeSpace(userInSession.getMyDrive().getFreeSpace() + spaceToFree);
+				fileService.deleteFile(file, userInSession.getUsername());
+				driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
+				userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
+				userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
+				userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().getRoot());
+				return "redirect:/home";
+			}
+	}
 	
 	@GetMapping("/move") 
 	public String loadmovePage(Model model) {

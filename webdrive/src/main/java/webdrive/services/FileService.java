@@ -276,4 +276,30 @@ public void moveFilePath(FileDrive oldFile, FileDrive updatedFile, String userna
 			
 		
 	}
+
+public void deleteFile(FileDrive pFile, String username) {
+	
+	JSONObject jsonObject = this.readFiles();
+	JSONArray arrayFiles = (JSONArray) jsonObject.get("arrayFiles");
+	JSONArray arrayFilesResult = new JSONArray();
+	Iterator<JSONObject> fileIterator = arrayFiles.iterator();
+	while(fileIterator.hasNext()) {
+		JSONObject fileRecord = fileIterator.next();
+		if(fileRecord.get("username").equals(username) && fileRecord.get("name").equals(pFile.getName()) 
+				&& fileRecord.get("path").equals(pFile.getPath())) {
+			
+			//No lo meto
+		}
+		else {
+			arrayFilesResult.add(fileRecord);
+		}
+	}
+	jsonObject = new JSONObject();
+	jsonObject.put("arrayFiles", arrayFilesResult);
+	writeFile(jsonObject);
+	
+	
+		
+	
+}
 }

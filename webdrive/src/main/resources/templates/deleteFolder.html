@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments :: head"></head>    
+<body>
+	<div th:replace="fragments :: navbar1"></div>
+	<div th:replace="fragments :: navbar2"></div> 
+	
+	<form action="/home/deletefolder" method="post">
+		<button type="submit" class="btn btn-danger">Delete</button>
+		<h3 style="color: #ff0033" th:text="${err}"></h3>
+	</form>
+</body>
+</html>
