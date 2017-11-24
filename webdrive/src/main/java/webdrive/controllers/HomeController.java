@@ -137,8 +137,11 @@ public class HomeController {
 	@PostMapping("/deletefolder") 
 	public String deleteFolder(RedirectAttributes redirectAttributes, @ModelAttribute("userInSession") User userInSession) {
 		Folder currentFolder = userInSession.getMyDrive().getCurrentFolder();
+		long spaceToFree = currentFolder.getTotalSize();
 		
+		userInSession.getMyDrive().setFreeSpace(userInSession.getMyDrive().getFreeSpace() + spaceToFree);
 		folderService.deleteFolder(currentFolder,userInSession.getUsername());
+		driveService.updateDrive(userInSession.getMyDrive(), userInSession.getUsername());
 		userInSession.setMyDrive(driveService.getUserDrive(userInSession.getUsername()));
 		userInSession.getMyDrive().setRoot(folderService.getUserFolders(userInSession.getUsername()));
 		userInSession.getMyDrive().setCurrentFolder(userInSession.getMyDrive().getRoot());
